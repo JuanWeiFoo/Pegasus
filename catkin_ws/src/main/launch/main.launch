@@ -1,0 +1,53 @@
+
+<launch>
+
+  <!--Carla Example ego launch -->
+  <arg name='host' default='localhost'/>
+  <arg name='port' default='2000'/>
+  <arg name="vehicle_filter" default="vehicle.tesla.cybertruck" />
+  <arg name="sensor_definition_file" default="$(find carla_ego_vehicle)/config/sensors.json"/>
+  <arg name="role_name" default="ego_vehicle"/>
+  <!-- use comma separated format "x,y,z,roll,pitch,yaw" -->
+  <arg name="spawn_point" default="393.098114,-228.08757,0.0,0.0,0.0,-90.598579"/>
+
+  <include file="$(find carla_ego_vehicle)/launch/carla_ego_vehicle.launch">
+    <arg name='host' value='$(arg host)'/>
+    <arg name='port' value='$(arg port)'/>
+    <arg name="vehicle_filter" value='$(arg vehicle_filter)'/>
+    <arg name="sensor_definition_file" value='$(arg sensor_definition_file)'/>
+    <arg name="role_name" value="$(arg role_name)"/>
+    <arg name="spawn_point" value="$(arg spawn_point)"/>
+  </include>
+  
+<!--Carla Ros Bridge Launch -->
+<arg name='host_1' default=''/>
+  <arg name='port_1' default=''/>
+  <arg name='rosbag_fname' default=''/>
+  <arg name='synchronous_mode' default=''/>
+  <arg name='synchronous_mode_wait_for_vehicle_control_command' default=''/>
+  <arg name='fixed_delta_seconds' default=''/>
+  <arg name='town' default=''/>
+  <param name="rosbag_fname" value="$(arg rosbag_fname)"/>
+  <rosparam file="$(find carla_ros_bridge)/config/settings.yaml" command="load" />
+  <param name="carla/host_1" value="$(arg host_1)" unless="$(eval host_1 == '')"/>
+  <param name="carla/port_1" value="$(arg port_1)" unless="$(eval port_1 == '')"/>
+  <param
+    name="carla/synchronous_mode"
+    value="$(arg synchronous_mode)"
+    unless="$(eval synchronous_mode == '')"/>
+  <param
+    name="carla/synchronous_mode_wait_for_vehicle_control_command"
+    value="$(arg synchronous_mode_wait_for_vehicle_control_command)"
+    unless="$(eval synchronous_mode_wait_for_vehicle_control_command == '')"/>
+  <param
+    name="carla/fixed_delta_seconds"
+    value="$(arg fixed_delta_seconds)"
+    unless="$(eval fixed_delta_seconds == '')"/>
+  <param
+    name="carla/town"
+    value="$(arg town)"
+    unless="$(eval town == '')"/>
+
+  <node pkg="carla_ros_bridge" name="carla_ros_bridge" type="bridge.py" output="screen"/>
+
+</launch>
